@@ -1,6 +1,7 @@
 const jobs = window.jobs || [];
 
 const searchInput = document.getElementById("searchInput");
+const clearSearch = document.getElementById("clearSearch");
 const jobsGrid = document.getElementById("jobsGrid");
 const totalJobsEl = document.getElementById("totalJobs");
 const atRiskJobsEl = document.getElementById("atRiskJobs");
@@ -9,6 +10,7 @@ const lastUpdatedEl = document.getElementById("lastUpdated");
 
 function formatDate(dateString) {
   if (!dateString) return "N/A";
+
   const date = new Date(dateString);
   if (isNaN(date)) return dateString;
 
@@ -25,6 +27,7 @@ function getStatusClass(status) {
   if (clean.includes("risk")) return "risk";
   if (clean.includes("watch")) return "watch";
   if (clean.includes("blind")) return "blind";
+
   return "default";
 }
 
@@ -38,11 +41,16 @@ function getLatestUpdated(jobsList) {
   if (!validDates.length) return "N/A";
 
   const latest = new Date(Math.max(...validDates));
-  return formatDate(latest.toISOString());
+  return latest.toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 }
 
 function updateKpis(jobsList) {
   const totalJobs = jobsList.length;
+
   const atRiskJobs = jobsList.filter(job =>
     (job.status || "").toLowerCase().includes("risk")
   ).length;
@@ -51,10 +59,10 @@ function updateKpis(jobsList) {
     (job.status || "").toLowerCase().includes("blind")
   ).length;
 
-  if (totalJobsEl) totalJobsEl.textContent = totalJobs;
-  if (atRiskJobsEl) atRiskJobsEl.textContent = atRiskJobs;
-  if (blindSpotsEl) blindSpotsEl.textContent = blindSpots;
-  if (lastUpdatedEl) lastUpdatedEl.textContent = getLatestUpdated(jobsList);
+  totalJobsEl.textContent = totalJobs;
+  atRiskJobsEl.textContent = atRiskJobs;
+  blindSpotsEl.textContent = blindSpots;
+  lastUpdatedEl.textContent = getLatestUpdated(jobsList);
 }
 
 function createWeekActivity(activity = []) {
@@ -67,8 +75,7 @@ function createWeekActivity(activity = []) {
       <h4>This Week</h4>
       ${activity.map(item => `
         <div class="activity-item">
-          <strong>${item.day}:</strong>
-          <span>${item.text}</span>
+          <strong>${item.day}:</strong> ${item.text}
         </div>
       `).join("")}
     </div>
@@ -119,8 +126,6 @@ function createJobCard(job) {
 }
 
 function renderJobs(jobsList) {
-  if (!jobsGrid) return;
-
   if (!jobsList.length) {
     jobsGrid.innerHTML = `
       <div class="no-results">
@@ -139,8 +144,11 @@ function filterJobs(searchTerm) {
   if (!cleanTerm) {
     updateKpis(jobs);
     renderJobs(jobs);
+    clearSearch.classList.remove("show");
     return;
   }
+
+  clearSearch.classList.add("show");
 
   const filtered = jobs.filter(job => {
     return [
@@ -152,7 +160,8 @@ function filterJobs(searchTerm) {
       job.next,
       job.criticalPath,
       job.dataConfidence,
-      job.reality
+      job.reality,
+      ...(job.weekActivity || []).map(item => `${item.day} ${item.text}`)
     ]
       .join(" ")
       .toLowerCase()
@@ -163,18 +172,15 @@ function filterJobs(searchTerm) {
   renderJobs(filtered);
 }
 
-function initSearch() {
-  if (!searchInput) return;
+searchInput.addEventListener("input", (e) => {
+  filterJobs(e.target.value);
+});
 
-  searchInput.addEventListener("input", (e) => {
-    filterJobs(e.target.value);
-  });
-}
+clearSearch.addEventListener("click", () => {
+  searchInput.value = "";
+  filterJobs("");
+  searchInput.focus();
+});
 
-function initDashboard() {
-  updateKpis(jobs);
-  renderJobs(jobs);
-  initSearch();
-}
-
-document.addEventListener("DOMContentLoaded", initDashboard);
+updateKpis(jobs);
+renderJobs(jobs);
