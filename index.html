@@ -3,53 +3,286 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>K&K Industries - Weekly Project Snapshot</title>
+  <title>K&K Industries</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="heading">
-        <h1>K&K Industries</h1>
-        <p>Weekly Project Snapshot</p>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-block">
+          <h1>K&amp;K Industries</h1>
+          <p>Weekly site position across active jobs</p>
+        </div>
+
+        <div class="summary-block">
+          <div class="summary-main">
+            <span>All Jobs</span>
+            <strong id="totalJobs">0</strong>
+          </div>
+          <div class="summary-sub">
+            Updated <span id="lastUpdated">-</span>
+          </div>
+        </div>
       </div>
 
-      <div class="search-wrap">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search jobs, issues, labour, critical path..."
-        />
-        <button id="clearSearch" class="clear-btn" aria-label="Clear search">×</button>
-      </div>
-    </div>
-
-    <div class="kpi-strip">
-      <div class="kpi-card total">
-        <h3>All Jobs</h3>
-        <p class="kpi-value" id="totalJobs">0</p>
-      </div>
-
-      <div class="kpi-card risk">
-        <h3>At Risk</h3>
-        <p class="kpi-value" id="atRiskJobs">0</p>
-      </div>
-
-      <div class="kpi-card blind">
-        <h3>Blind Spots</h3>
-        <p class="kpi-value" id="blindSpots">0</p>
+      <div class="kpi-strip">
+        <div class="kpi-item">
+          <span class="dot risk"></span>
+          <span id="riskCount">0</span>
+          <small>At Risk</small>
+        </div>
+        <div class="kpi-item">
+          <span class="dot watch"></span>
+          <span id="watchCount">0</span>
+          <small>Watch</small>
+        </div>
+        <div class="kpi-item">
+          <span class="dot track"></span>
+          <span id="trackCount">0</span>
+          <small>On Track</small>
+        </div>
+        <div class="kpi-item">
+          <span class="dot blind"></span>
+          <span id="blindCount">0</span>
+          <small>Blind Spots</small>
+        </div>
       </div>
 
-      <div class="kpi-card updated">
-        <h3>Last Updated</h3>
-        <p class="kpi-value" id="lastUpdated">-</p>
-      </div>
-    </div>
+      <div class="toolbar">
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="risk">At Risk</button>
+          <button class="filter-btn" data-filter="watch">Watch</button>
+          <button class="filter-btn" data-filter="track">On Track</button>
+          <button class="filter-btn" data-filter="blind">Blind Spots</button>
+        </div>
 
-    <div class="jobs-grid" id="jobsGrid"></div>
+        <div class="search-wrap">
+          <input id="searchInput" type="text" placeholder="Search jobs..." />
+          <button id="clearSearch" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="jobList" class="job-list"></section>
+    </main>
   </div>
 
   <script src="data.js"></script>
-  <script src="script.js"></script>
+  <script>
+    const jobs = Array.isArray(window.jobs) ? window.jobs : [];
+
+    const jobList = document.getElementById("jobList");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearch = document.getElementById("clearSearch");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    let activeFilter = "all";
+    let searchTerm = "";
+
+    function safeText(value, fallback = "-") {
+      return value && String(value).trim() ? value : fallback;
+    }
+
+    function getStatusClass(status) {
+      const s = String(status || "").toLowerCase();
+      if (s.includes("risk")) return "risk";
+      if (s.includes("watch")) return "watch";
+      if (s.includes("track")) return "track";
+      return "blind";
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return safeText(value);
+      return date.toLocaleDateString("en-AU", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    function updateSummary() {
+      document.getElementById("totalJobs").textContent = jobs.length;
+
+      const counts = { risk: 0, watch: 0, track: 0, blind: 0 };
+      jobs.forEach(job => counts[getStatusClass(job.status)]++);
+
+      document.getElementById("riskCount").textContent = counts.risk;
+      document.getElementById("watchCount").textContent = counts.watch;
+      document.getElementById("trackCount").textContent = counts.track;
+      document.getElementById("blindCount").textContent = counts.blind;
+
+      const latest = jobs
+        .map(job => new Date(job.updated))
+        .filter(d => !isNaN(d.getTime()))
+        .sort((a, b) => b - a)[0];
+
+      document.getElementById("lastUpdated").textContent =
+        latest ? latest.toLocaleDateString("en-AU", {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }) : "-";
+    }
+
+    function buildWeekActivity(activity) {
+      if (!Array.isArray(activity) || !activity.length) {
+        return `<div class="activity-empty">No activity records available.</div>`;
+      }
+
+      return activity.map(item => `
+        <div class="activity-row">
+          <div class="activity-day">${safeText(item.day)}</div>
+          <div class="activity-text">${safeText(item.text)}</div>
+        </div>
+      `).join("");
+    }
+
+    function getFilteredJobs() {
+      return jobs.filter(job => {
+        const statusClass = getStatusClass(job.status);
+        const matchesFilter = activeFilter === "all" || statusClass === activeFilter;
+
+        const haystack = [
+          job.name,
+          job.status,
+          job.issue,
+          job.labour,
+          job.holdingUp,
+          job.next,
+          job.criticalPath,
+          job.reality,
+          job.weekEnding,
+          job.updated
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = haystack.includes(searchTerm.toLowerCase());
+
+        return matchesFilter && matchesSearch;
+      });
+    }
+
+    function renderJobs() {
+      const filteredJobs = getFilteredJobs();
+
+      if (!filteredJobs.length) {
+        jobList.innerHTML = `
+          <div class="empty-state">
+            No jobs match this search or filter.
+          </div>
+        `;
+        return;
+      }
+
+      jobList.innerHTML = filteredJobs.map(job => {
+        const statusClass = getStatusClass(job.status);
+
+        return `
+          <article class="job-card ${statusClass}">
+            <button class="job-top" type="button">
+              <div class="job-top-main">
+                <div class="job-title-row">
+                  <h2>${safeText(job.name)}</h2>
+                  <span class="status-pill ${statusClass}">${safeText(job.status)}</span>
+                </div>
+
+                <div class="job-meta">
+                  <span>Week Ending ${formatDate(job.weekEnding)}</span>
+                  <span>Updated ${formatDate(job.updated)}</span>
+                </div>
+
+                <div class="job-priority-grid">
+                  <div class="field">
+                    <div class="label">Issue</div>
+                    <div class="value">${safeText(job.issue)}</div>
+                  </div>
+
+                  <div class="field">
+                    <div class="label">Labour</div>
+                    <div class="value">${safeText(job.labour)}</div>
+                  </div>
+
+                  <div class="field full">
+                    <div class="label">Holding Up</div>
+                    <div class="value emphasis">${safeText(job.holdingUp)}</div>
+                  </div>
+
+                  <div class="field full">
+                    <div class="label">Action Required</div>
+                    <div class="value">${safeText(job.next)}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chevron">⌄</div>
+            </button>
+
+            <div class="job-detail">
+              <div class="detail-grid">
+                <div class="field">
+                  <div class="label">Critical Path</div>
+                  <div class="value">${safeText(job.criticalPath)}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Report Confidence</div>
+                  <div class="tag">${safeText(job.dataConfidence)}</div>
+                </div>
+
+                <div class="field full">
+                  <div class="label">Reality</div>
+                  <div class="value">${safeText(job.reality)}</div>
+                </div>
+              </div>
+
+              <div class="activity-block">
+                <div class="label">Week Activity</div>
+                ${buildWeekActivity(job.weekActivity)}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".job-card").forEach(card => {
+        const trigger = card.querySelector(".job-top");
+        trigger.addEventListener("click", () => {
+          card.classList.toggle("open");
+        });
+      });
+    }
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        activeFilter = button.dataset.filter;
+        renderJobs();
+      });
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      searchTerm = e.target.value.trim();
+      clearSearch.classList.toggle("show", !!searchTerm);
+      renderJobs();
+    });
+
+    clearSearch.addEventListener("click", () => {
+      searchInput.value = "";
+      searchTerm = "";
+      clearSearch.classList.remove("show");
+      activeFilter = "all";
+      filterButtons.forEach(btn => btn.classList.remove("active"));
+      document.querySelector('[data-filter="all"]').classList.add("active");
+      renderJobs();
+      searchInput.focus();
+    });
+
+    updateSummary();
+    renderJobs();
+  </script>
 </body>
 </html>
