@@ -10,15 +10,14 @@ window.jobs = [
     next: "Replace contractor or enforce recovery plan this week. Confirm critical path and tighten daily logs.",
     criticalPath: "Civil works",
     dataConfidence: "Medium",
-    reality: "Civil works progressing with PGE and Virgil onsite, but demolition is holding overall programme back.",
+    reality: "Civil works are progressing with PGE and Virgil onsite, but demolition is still holding the overall programme back.",
     weekActivity: [
       {
         day: "Thursday",
-        text: "PGE (3 men) and Virgil (2 men) onsite. Sediment fencing completed. Programme recorded as Behind."
+        text: "PGE with 3 men and Virgil with 2 men onsite. Sediment fencing completed. Programme recorded as Behind."
       }
     ]
   },
-
   {
     name: "Pearl Energy Childers",
     status: "Watch",
@@ -30,15 +29,14 @@ window.jobs = [
     next: "Lock concreter start date, increase labour immediately, and ensure slab prep is ready.",
     criticalPath: "Slab / concreting",
     dataConfidence: "Medium",
-    reality: "Site is largely prepared but fragile. Without labour increase, concreting start is at risk.",
+    reality: "Prep is largely complete, but the job is fragile. Without more labour, the concreter start is at risk.",
     weekActivity: [
       {
         day: "Week",
-        text: "Single operator most of the week. Late arrival reduced productivity. Prep works ongoing."
+        text: "Single operator carried most of the load. Prep works continued, but labour depth remains too thin."
       }
     ]
   },
-
   {
     name: "Exus Williamstown",
     status: "Blind Spot",
@@ -46,19 +44,18 @@ window.jobs = [
     updated: "2026-04-06",
     issue: "No structured data",
     labour: "Active trades onsite",
-    holdingUp: "No programme visibility due to missing logs",
-    next: "Complete daily logs with programme status, work areas, and completed works immediately.",
+    holdingUp: "No programme visibility due to missing daily logs",
+    next: "Complete daily logs properly with programme status, work areas and completed works.",
     criticalPath: "Unknown",
     dataConfidence: "Low",
-    reality: "Work appears to be progressing, but position cannot be assessed due to lack of structured data.",
+    reality: "Work appears active onsite, but the real programme position cannot be assessed from current logs.",
     weekActivity: [
       {
         day: "Week",
-        text: "General site activity observed, but no usable structured entries recorded."
+        text: "General site activity noted, but no structured entries were recorded clearly enough to assess status."
       }
     ]
   },
-
   {
     name: "Pearl Energy Emerald",
     status: "Blind Spot",
@@ -70,7 +67,7 @@ window.jobs = [
     next: "Export and upload valid daily logs before next reporting cycle.",
     criticalPath: "Unknown",
     dataConfidence: "Low",
-    reality: "No visibility on site progress due to missing logs.",
+    reality: "No visibility on progress, labour or programme because no usable site logs were available.",
     weekActivity: [
       {
         day: "Week",
