@@ -1,1 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Story</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 16px;
+      color: #1f2933;
+    }
 
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .top {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .week {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .badge.red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge.amber {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge.grey {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .value {
+      font-size: 17px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .value:last-child {
+      margin-bottom: 0;
+    }
+
+    .day {
+      padding: 12px 0;
+      border-top: 1px solid #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .day:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #0f62fe;
+    }
+
+    .not-found {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .top,
+      .card,
+      .not-found {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .value {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../index.html">← Back to Hub</a>
+
+    <div class="top">
+      <h1 id="jobName">Job</h1>
+      <div class="week" id="week"></div>
+      <div id="statusBadge" class="badge">Status</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Issue</div>
+      <div class="value" id="issue"></div>
+
+      <div class="label">Holding Up</div>
+      <div class="value" id="holdingUp"></div>
+
+      <div class="label">Labour</div>
+      <div class="value" id="labour"></div>
+
+      <div class="label">Critical Path</div>
+      <div class="value" id="criticalPath"></div>
+
+      <div class="label">Reality</div>
+      <div class="value" id="reality"></div>
+
+      <div class="label">Next</div>
+      <div class="value" id="next"></div>
+
+      <div class="label">Data Confidence</div>
+      <div class="value" id="dataConfidence"></div>
+    </div>
+
+    <div class="card">
+      <div class="label">Week Activity</div>
+      <div id="activity"></div>
+    </div>
+  </div>
+
+  <script src="../data.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const job = jobs.find(j => j.id === id);
+
+    if (!job) {
+      document.querySelector(".wrap").innerHTML = `
+        <div class="not-found">
+          <h2>Job not found</h2>
+          <p>Check the link and try again.</p>
+          <a class="back" href="../index.html">← Back to Hub</a>
+        </div>
+      `;
+    } else {
+      document.getElementById("jobName").textContent = job.name;
+      document.getElementById("week").textContent = job.week || "";
+      document.getElementById("issue").textContent = job.issue || "";
+      document.getElementById("holdingUp").textContent = job.holdingUp || "";
+      document.getElementById("labour").textContent = job.labour || "";
+      document.getElementById("criticalPath").textContent = job.criticalPath || "";
+      document.getElementById("reality").textContent = job.reality || "";
+      document.getElementById("next").textContent = job.next || "";
+      document.getElementById("dataConfidence").textContent = job.dataConfidence || "";
+
+      const badge = document.getElementById("statusBadge");
+      badge.textContent = job.status || "";
+      badge.classList.add(job.status);
+
+      const activityWrap = document.getElementById("activity");
+      const items = job.activity || [];
+
+      if (items.length === 0) {
+        activityWrap.innerHTML = `<div class="day">No activity logged.</div>`;
+      } else {
+        activityWrap.innerHTML = items.map(item => `
+          <div class="day">
+            <strong>${item.day}</strong><br>
+            ${item.text}
+          </div>
+        `).join("");
+      }
+    }
+  </script>
+</body>
+</html>
