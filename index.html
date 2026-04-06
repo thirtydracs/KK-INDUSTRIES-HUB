@@ -1,1 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>K&K Industries Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 16px;
+      color: #1f2933;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .sub {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .counts {
+      font-weight: bold;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .filters button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #1f2933;
+    }
+
+    .filters button:hover {
+      opacity: 0.9;
+    }
+
+    .search {
+      width: 100%;
+      max-width: 320px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+    }
+
+    .jobs {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .card.red {
+      border-left: 6px solid #dc2626;
+    }
+
+    .card.amber {
+      border-left: 6px solid #f59e0b;
+    }
+
+    .card.green {
+      border-left: 6px solid #16a34a;
+    }
+
+    .card.grey {
+      border-left: 6px solid #6b7280;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .job-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .status-pill {
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status-pill.red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-pill.amber {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-pill.green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-pill.grey {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .line {
+      margin: 6px 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .empty {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .topbar,
+      .card,
+      .empty {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .job-name {
+        font-size: 18px;
+      }
+
+      .card-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>K&K Industries Hub</h1>
+      <div class="sub">Weekly site position across active jobs</div>
+
+      <div class="counts" id="counts"></div>
+
+      <div class="filters">
+        <button onclick="setFilter('all')">All</button>
+        <button onclick="setFilter('red')">🔴 At Risk</button>
+        <button onclick="setFilter('amber')">🟡 Watch</button>
+        <button onclick="setFilter('green')">🟢 On Track</button>
+        <button onclick="setFilter('grey')">⚪ Blind Spots</button>
+      </div>
+
+      <input
+        class="search"
+        type="text"
+        id="searchInput"
+        placeholder="Search jobs..."
+        onkeyup="setSearch(this.value)"
+      />
+    </div>
+
+    <div class="jobs" id="jobs"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+    let currentFilter = "all";
+    let currentSearch = "";
+
+    function niceStatus(status) {
+      if (status === "red") return "At Risk";
+      if (status === "amber") return "Watch";
+      if (status === "green") return "On Track";
+      if (status === "grey") return "Blind Spot";
+      return status;
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      renderJobs();
+    }
+
+    function setSearch(value) {
+      currentSearch = value.toLowerCase().trim();
+      renderJobs();
+    }
+
+    function renderJobs() {
+      const jobsWrap = document.getElementById("jobs");
+      jobsWrap.innerHTML = "";
+
+      const filteredJobs = jobs.filter(job => {
+        const filterMatch = currentFilter === "all" || job.status === currentFilter;
+        const searchMatch =
+          job.name.toLowerCase().includes(currentSearch) ||
+          job.issue.toLowerCase().includes(currentSearch) ||
+          job.holdingUp.toLowerCase().includes(currentSearch);
+
+        return filterMatch && searchMatch;
+      });
+
+      if (filteredJobs.length === 0) {
+        jobsWrap.innerHTML = `<div class="empty">No jobs match this filter.</div>`;
+        updateCounts();
+        return;
+      }
+
+      filteredJobs.forEach(job => {
+        const card = document.createElement("a");
+        card.className = "card " + job.status;
+        card.href = "jobs/job.html?id=" + job.id;
+
+        card.innerHTML = `
+          <div class="card-top">
+            <h2 class="job-name">${job.name}</h2>
+            <div class="status-pill ${job.status}">${niceStatus(job.status)}</div>
+          </div>
+
+          <div class="line"><span class="label">Issue:</span> ${job.issue}</div>
+          <div class="line"><span class="label">Labour:</span> ${job.labour}</div>
+          <div class="line"><span class="label">Holding Up:</span> ${job.holdingUp}</div>
+          <div class="line"><span class="label">Next:</span> ${job.next}</div>
+        `;
+
+        jobsWrap.appendChild(card);
+      });
+
+      updateCounts();
+    }
+
+    function updateCounts() {
+      const total = jobs.length;
+      const red = jobs.filter(j => j.status === "red").length;
+      const amber = jobs.filter(j => j.status === "amber").length;
+      const grey = jobs.filter(j => j.status === "grey").length;
+
+      document.getElementById("counts").textContent =
+        `Jobs: ${total} | At Risk: ${red} | Watch: ${amber} | Blind Spots: ${grey}`;
+    }
+
+    renderJobs();
+  </script>
+</body>
+</html>
