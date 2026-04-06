@@ -3,28 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>K&K Industries</title>
+  <title>K&K Industries – Weekly Project Snapshot</title>
   <style>
-    :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-
-      --risk: #dc2626;
-      --risk-bg: #fef2f2;
-
-      --watch: #d97706;
-      --watch-bg: #fff7ed;
-
-      --track: #16a34a;
-      --track-bg: #f0fdf4;
-
-      --blind: #6b7280;
-      --blind-bg: #f9fafb;
-    }
-
     * {
       box-sizing: border-box;
     }
@@ -32,462 +12,469 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 16px;
+      background: #f3f4f6;
+      color: #1f2937;
     }
 
     .wrap {
-      max-width: 920px;
+      max-width: 1300px;
       margin: 0 auto;
+      padding: 20px;
     }
 
-    .header {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 14px;
+    .topbar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
-    h1 {
+    .heading h1 {
       margin: 0;
-      font-size: 22px;
-      line-height: 1.1;
+      font-size: 30px;
+      line-height: 1.2;
     }
 
-    .sub {
-      margin-top: 4px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .top-summary {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .summary-main {
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .summary-sub {
-      margin-top: 3px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .kpi-inline {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .kpi-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      color: #374151;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-
-    .dot.risk { background: var(--risk); }
-    .dot.watch { background: var(--watch); }
-    .dot.track { background: var(--track); }
-    .dot.blind { background: var(--blind); }
-
-    .filters {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      margin-top: 14px;
-    }
-
-    .filter-btn {
-      border: 1px solid #d1d5db;
-      background: #f3f4f6;
-      color: #374151;
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .filter-btn.active {
-      background: #ffffff;
-      border-color: #9ca3af;
+    .heading p {
+      margin: 6px 0 0;
+      color: #6b7280;
+      font-size: 15px;
     }
 
     .search-wrap {
       position: relative;
-      margin-top: 10px;
+      width: 100%;
+      max-width: 420px;
     }
 
-    .search {
+    .search-wrap input {
       width: 100%;
+      padding: 14px 44px 14px 14px;
       border: 1px solid #d1d5db;
-      background: #f9fafb;
-      border-radius: 10px;
-      padding: 11px 40px 11px 12px;
-      font-size: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      background: #fff;
       outline: none;
     }
 
-    .search:focus {
-      border-color: #9ca3af;
-      background: #ffffff;
+    .search-wrap input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
-    #clearSearch {
+    .clear-btn {
       position: absolute;
-      right: 12px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 16px;
-      color: #9ca3af;
+      border: none;
+      background: transparent;
+      font-size: 20px;
       cursor: pointer;
+      color: #6b7280;
       display: none;
-      user-select: none;
       line-height: 1;
     }
 
-    .job-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .job {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-left: 4px solid #d1d5db;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .job.risk { border-left-color: var(--risk); }
-    .job.watch { border-left-color: var(--watch); }
-    .job.track { border-left-color: var(--track); }
-    .job.blind { border-left-color: var(--blind); }
-
-    .job-top {
-      padding: 16px;
-      cursor: pointer;
-    }
-
-    .job-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .job-head-left {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .job-title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .job-title {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.2;
-      font-weight: 800;
-    }
-
-    .status {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 5px 8px;
-      border-radius: 8px;
-      display: inline-block;
-    }
-
-    .status.risk {
-      background: var(--risk-bg);
-      color: #991b1b;
-    }
-
-    .status.watch {
-      background: var(--watch-bg);
-      color: #92400e;
-    }
-
-    .status.track {
-      background: var(--track-bg);
-      color: #166534;
-    }
-
-    .status.blind {
-      background: var(--blind-bg);
-      color: #4b5563;
-    }
-
-    .chevron {
-      font-size: 12px;
-      color: #9ca3af;
-      padding-top: 2px;
-      flex-shrink: 0;
-    }
-
-    .job.open .chevron {
-      transform: rotate(180deg);
-    }
-
-    .meta {
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px 18px;
-      margin-top: 14px;
-    }
-
-    .label {
-      font-size: 11px;
-      color: #9ca3af;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 5px;
-    }
-
-    .value {
-      font-size: 14px;
-      line-height: 1.45;
-      color: #374151;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .job-detail {
-      display: none;
-      border-top: 1px solid var(--line);
-      background: #fcfcfd;
-      padding: 14px 16px 16px;
-    }
-
-    .job.open .job-detail {
+    .clear-btn.show {
       display: block;
     }
 
-    .detail-grid {
+    .kpi-strip {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px 18px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
     }
 
-    .confidence {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 12px;
+    .kpi-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      border-left: 5px solid #d1d5db;
+    }
+
+    .kpi-card h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .kpi-card .kpi-value {
+      font-size: 28px;
       font-weight: 700;
-      background: #f3f4f6;
+      margin: 0;
+    }
+
+    .kpi-card.total {
+      border-left-color: #2563eb;
+    }
+
+    .kpi-card.risk {
+      border-left-color: #dc2626;
+    }
+
+    .kpi-card.blind {
+      border-left-color: #6b7280;
+    }
+
+    .kpi-card.updated {
+      border-left-color: #059669;
+    }
+
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .job-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .job-card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .job-card-top h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .job-dates {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status-pill {
+      display: inline-block;
+      white-space: nowrap;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .status-pill.risk {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .status-pill.watch {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .status-pill.blind {
+      background: #e5e7eb;
       color: #374151;
     }
 
-    .week-activity {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
+    .status-pill.default {
+      background: #dbeafe;
+      color: #1d4ed8;
     }
 
-    .activity-row {
-      padding: 9px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-
-    .activity-row:last-child {
-      border-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .activity-day {
-      font-size: 11px;
-      color: #9ca3af;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
-    }
-
-    .empty {
-      background: var(--card);
-      border: 1px dashed #d1d5db;
-      border-radius: 16px;
-      padding: 24px 16px;
-      text-align: center;
-      color: var(--muted);
+    .job-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 14px;
       font-size: 14px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 700px) {
-      .summary-grid,
-      .detail-grid {
+    .job-section h4,
+    .week-activity h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #374151;
+    }
+
+    .job-section p,
+    .activity-item,
+    .empty-text {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #1f2937;
+    }
+
+    .week-activity {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .activity-item {
+      padding-top: 8px;
+    }
+
+    .activity-item:first-of-type {
+      padding-top: 0;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      color: #6b7280;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    @media (max-width: 980px) {
+      .kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .jobs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 14px;
+      }
+
+      .heading h1 {
+        font-size: 24px;
+      }
+
+      .kpi-strip {
         grid-template-columns: 1fr;
       }
 
-      .job-title {
-        font-size: 15px;
+      .job-card-top {
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      .summary-main {
-        font-size: 17px;
+      .job-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .search-wrap {
+        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="header">
-      <h1>K&amp;K Industries</h1>
-      <div class="sub">Weekly site position across active jobs</div>
-
-      <div class="top-summary">
-        <div>
-          <div class="summary-main">All Jobs <span id="totalJobs">0</span></div>
-          <div class="summary-sub">Updated <span id="lastUpdated">-</span></div>
-        </div>
-
-        <div class="kpi-inline">
-          <div class="kpi-item"><span class="dot risk"></span><span id="riskCount">0</span></div>
-          <div class="kpi-item"><span class="dot watch"></span><span id="watchCount">0</span></div>
-          <div class="kpi-item"><span class="dot track"></span><span id="trackCount">0</span></div>
-          <div class="kpi-item"><span class="dot blind"></span><span id="blindCount">0</span></div>
-        </div>
-      </div>
-
-      <div class="filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="risk">At Risk</button>
-        <button class="filter-btn" data-filter="watch">Watch</button>
-        <button class="filter-btn" data-filter="track">On Track</button>
-        <button class="filter-btn" data-filter="blind">Blind Spots</button>
+    <div class="topbar">
+      <div class="heading">
+        <h1>K&amp;K Industries</h1>
+        <p>Weekly Project Snapshot</p>
       </div>
 
       <div class="search-wrap">
-        <input id="searchInput" class="search" type="text" placeholder="Search jobs..." />
-        <span id="clearSearch">✕</span>
+        <input type="text" id="searchInput" placeholder="Search jobs, issues, labour, critical path..." />
+        <button class="clear-btn" id="clearSearch" aria-label="Clear search">×</button>
       </div>
     </div>
 
-    <div id="jobList" class="job-list"></div>
+    <div class="kpi-strip">
+      <div class="kpi-card total">
+        <h3>All Jobs</h3>
+        <p class="kpi-value" id="totalJobs">0</p>
+      </div>
+
+      <div class="kpi-card risk">
+        <h3>At Risk</h3>
+        <p class="kpi-value" id="atRiskJobs">0</p>
+      </div>
+
+      <div class="kpi-card blind">
+        <h3>Blind Spots</h3>
+        <p class="kpi-value" id="blindSpots">0</p>
+      </div>
+
+      <div class="kpi-card updated">
+        <h3>Last Updated</h3>
+        <p class="kpi-value" id="lastUpdated">-</p>
+      </div>
+    </div>
+
+    <div class="jobs-grid" id="jobsGrid"></div>
   </div>
 
   <script src="data.js"></script>
   <script>
-    const jobs = Array.isArray(window.jobs) ? window.jobs : [];
+    const jobs = window.jobs || [];
 
-    const jobList = document.getElementById("jobList");
     const searchInput = document.getElementById("searchInput");
     const clearSearch = document.getElementById("clearSearch");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-
-    let activeFilter = "all";
-    let searchTerm = "";
-
-    function getStatusClass(status) {
-      const s = String(status || "").toLowerCase();
-      if (s.includes("risk")) return "risk";
-      if (s.includes("watch")) return "watch";
-      if (s.includes("track")) return "track";
-      return "blind";
-    }
-
-    function safeText(value, fallback = "-") {
-      return value && String(value).trim() ? value : fallback;
-    }
+    const jobsGrid = document.getElementById("jobsGrid");
+    const totalJobsEl = document.getElementById("totalJobs");
+    const atRiskJobsEl = document.getElementById("atRiskJobs");
+    const blindSpotsEl = document.getElementById("blindSpots");
+    const lastUpdatedEl = document.getElementById("lastUpdated");
 
     function formatDate(dateString) {
+      if (!dateString) return "N/A";
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return safeText(dateString);
+      if (isNaN(date)) return dateString;
+
       return date.toLocaleDateString("en-AU", {
-        day: "numeric",
+        day: "2-digit",
         month: "short",
         year: "numeric"
       });
     }
 
-    function updateSummary() {
-      document.getElementById("totalJobs").textContent = jobs.length;
+    function getStatusClass(status) {
+      const clean = (status || "").toLowerCase();
 
-      const counts = { risk: 0, watch: 0, track: 0, blind: 0 };
-
-      jobs.forEach(job => {
-        counts[getStatusClass(job.status)]++;
-      });
-
-      document.getElementById("riskCount").textContent = counts.risk;
-      document.getElementById("watchCount").textContent = counts.watch;
-      document.getElementById("trackCount").textContent = counts.track;
-      document.getElementById("blindCount").textContent = counts.blind;
-
-      const latestDate = jobs
-        .map(job => new Date(job.updated))
-        .filter(date => !isNaN(date.getTime()))
-        .sort((a, b) => b - a)[0];
-
-      document.getElementById("lastUpdated").textContent =
-        latestDate ? latestDate.toLocaleDateString("en-AU", {
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        }) : "-";
+      if (clean.includes("risk")) return "risk";
+      if (clean.includes("watch")) return "watch";
+      if (clean.includes("blind")) return "blind";
+      return "default";
     }
 
-    function buildWeekActivity(activity) {
-      if (!Array.isArray(activity) || !activity.length) {
-        return '<div class="value">No activity records available.</div>';
+    function getLatestUpdated(jobsList) {
+      if (!jobsList.length) return "N/A";
+
+      const validDates = jobsList
+        .map(job => new Date(job.updated))
+        .filter(date => !isNaN(date));
+
+      if (!validDates.length) return "N/A";
+
+      const latest = new Date(Math.max(...validDates));
+      return latest.toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    function updateKpis(jobsList) {
+      const totalJobs = jobsList.length;
+
+      const atRiskJobs = jobsList.filter(job =>
+        (job.status || "").toLowerCase().includes("risk")
+      ).length;
+
+      const blindSpots = jobsList.filter(job =>
+        (job.status || "").toLowerCase().includes("blind")
+      ).length;
+
+      totalJobsEl.textContent = totalJobs;
+      atRiskJobsEl.textContent = atRiskJobs;
+      blindSpotsEl.textContent = blindSpots;
+      lastUpdatedEl.textContent = getLatestUpdated(jobsList);
+    }
+
+    function createWeekActivity(activity = []) {
+      if (!activity.length) {
+        return `<p class="empty-text">No activity recorded.</p>`;
       }
 
-      return activity.map(item => `
-        <div class="activity-row">
-          <div class="activity-day">${safeText(item.day)}</div>
-          <div class="value">${safeText(item.text)}</div>
+      return `
+        <div class="week-activity">
+          <h4>This Week</h4>
+          ${activity.map(item => `
+            <div class="activity-item">
+              <strong>${item.day}:</strong> ${item.text}
+            </div>
+          `).join("")}
         </div>
-      `).join("");
+      `;
     }
 
-    function getFilteredJobs() {
-      return jobs.filter(job => {
-        const statusClass = getStatusClass(job.status);
-        const matchesFilter = activeFilter === "all" || statusClass === activeFilter;
+    function createJobCard(job) {
+      const statusClass = getStatusClass(job.status);
 
-        const haystack = [
+      return `
+        <article class="job-card">
+          <div class="job-card-top">
+            <div>
+              <h3>${job.name}</h3>
+              <p class="job-dates">
+                Week Ending: ${formatDate(job.weekEnding)}<br>
+                Updated: ${formatDate(job.updated)}
+              </p>
+            </div>
+            <span class="status-pill ${statusClass}">${job.status}</span>
+          </div>
+
+          <div class="job-meta">
+            <div><strong>Issue:</strong> ${job.issue}</div>
+            <div><strong>Labour:</strong> ${job.labour}</div>
+            <div><strong>Critical Path:</strong> ${job.criticalPath}</div>
+            <div><strong>Data Confidence:</strong> ${job.dataConfidence}</div>
+          </div>
+
+          <div class="job-section">
+            <h4>Holding Up</h4>
+            <p>${job.holdingUp}</p>
+          </div>
+
+          <div class="job-section">
+            <h4>Reality</h4>
+            <p>${job.reality}</p>
+          </div>
+
+          <div class="job-section">
+            <h4>Next Action</h4>
+            <p>${job.next}</p>
+          </div>
+
+          ${createWeekActivity(job.weekActivity)}
+        </article>
+      `;
+    }
+
+    function renderJobs(jobsList) {
+      if (!jobsList.length) {
+        jobsGrid.innerHTML = `
+          <div class="no-results">
+            <p>No jobs found.</p>
+          </div>
+        `;
+        return;
+      }
+
+      jobsGrid.innerHTML = jobsList.map(createJobCard).join("");
+    }
+
+    function filterJobs(searchTerm) {
+      const cleanTerm = (searchTerm || "").trim().toLowerCase();
+
+      if (!cleanTerm) {
+        updateKpis(jobs);
+        renderJobs(jobs);
+        clearSearch.classList.remove("show");
+        return;
+      }
+
+      clearSearch.classList.add("show");
+
+      const filtered = jobs.filter(job => {
+        return [
           job.name,
           job.status,
           job.issue,
@@ -495,134 +482,31 @@
           job.holdingUp,
           job.next,
           job.criticalPath,
+          job.dataConfidence,
           job.reality,
-          job.weekEnding,
-          job.updated
-        ].join(" ").toLowerCase();
-
-        const matchesSearch = haystack.includes(searchTerm.toLowerCase());
-
-        return matchesFilter && matchesSearch;
+          ...(job.weekActivity || []).map(item => `${item.day} ${item.text}`)
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(cleanTerm);
       });
+
+      updateKpis(filtered);
+      renderJobs(filtered);
     }
 
-    function renderJobs() {
-      const filteredJobs = getFilteredJobs();
-
-      if (!filteredJobs.length) {
-        jobList.innerHTML = '<div class="empty">No jobs match this search or filter.</div>';
-        return;
-      }
-
-      jobList.innerHTML = filteredJobs.map(job => {
-        const statusClass = getStatusClass(job.status);
-
-        return `
-          <div class="job ${statusClass}">
-            <div class="job-top">
-              <div class="job-head">
-                <div class="job-head-left">
-                  <div class="job-title-row">
-                    <h2 class="job-title">${safeText(job.name)}</h2>
-                    <span class="status ${statusClass}">${safeText(job.status)}</span>
-                  </div>
-
-                  <div class="meta">
-                    Week Ending ${formatDate(job.weekEnding)}<br>
-                    Updated ${formatDate(job.updated)}
-                  </div>
-                </div>
-
-                <div class="chevron">▼</div>
-              </div>
-
-              <div class="summary-grid">
-                <div class="field">
-                  <div class="label">Issue</div>
-                  <div class="value">${safeText(job.issue)}</div>
-                </div>
-
-                <div class="field">
-                  <div class="label">Labour</div>
-                  <div class="value">${safeText(job.labour)}</div>
-                </div>
-
-                <div class="field full">
-                  <div class="label">Holding Up</div>
-                  <div class="value">${safeText(job.holdingUp)}</div>
-                </div>
-
-                <div class="field full">
-                  <div class="label">Action Required</div>
-                  <div class="value">${safeText(job.next)}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="job-detail">
-              <div class="detail-grid">
-                <div class="field">
-                  <div class="label">Critical Path</div>
-                  <div class="value">${safeText(job.criticalPath)}</div>
-                </div>
-
-                <div class="field">
-                  <div class="label">Report Confidence</div>
-                  <div class="value"><span class="confidence">${safeText(job.dataConfidence)}</span></div>
-                </div>
-
-                <div class="field" style="grid-column: 1 / -1;">
-                  <div class="label">Reality</div>
-                  <div class="value">${safeText(job.reality)}</div>
-                </div>
-              </div>
-
-              <div class="week-activity">
-                <div class="label">Week Activity</div>
-                ${buildWeekActivity(job.weekActivity)}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      document.querySelectorAll(".job").forEach(card => {
-        card.addEventListener("click", () => {
-          card.classList.toggle("open");
-        });
-      });
-    }
-
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        filterButtons.forEach(btn => btn.classList.remove("active"));
-        button.classList.add("active");
-        activeFilter = button.dataset.filter;
-        renderJobs();
-      });
+    searchInput.addEventListener("input", (e) => {
+      filterJobs(e.target.value);
     });
 
-    searchInput.addEventListener("input", (event) => {
-      searchTerm = event.target.value.trim();
-      clearSearch.style.display = searchTerm ? "block" : "none";
-      renderJobs();
-    });
-
-    clearSearch.addEventListener("click", (event) => {
-      event.stopPropagation();
+    clearSearch.addEventListener("click", () => {
       searchInput.value = "";
-      searchTerm = "";
-      clearSearch.style.display = "none";
-      activeFilter = "all";
-
-      filterButtons.forEach(btn => btn.classList.remove("active"));
-      document.querySelector('[data-filter="all"]').classList.add("active");
-
-      renderJobs();
+      filterJobs("");
+      searchInput.focus();
     });
 
-    updateSummary();
-    renderJobs();
+    updateKpis(jobs);
+    renderJobs(jobs);
   </script>
 </body>
 </html>
