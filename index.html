@@ -2,670 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>K&K Industries Hub</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>K&K Industries</title>
 
+  <style>
     :root {
       --bg: #f3f4f6;
       --card: #ffffff;
       --text: #111827;
       --muted: #6b7280;
       --line: #e5e7eb;
-      --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 
       --risk: #dc2626;
-      --risk-bg: #fef2f2;
-
       --watch: #d97706;
-      --watch-bg: #fff7ed;
-
       --track: #16a34a;
-      --track-bg: #f0fdf4;
-
       --blind: #6b7280;
-      --blind-bg: #f9fafb;
-
-      --navy: #0f172a;
-      --gold: #f59e0b;
     }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: var(--bg);
-      color: var(--text);
-      padding: 20px 14px 40px;
+      padding: 16px;
     }
 
     .wrap {
-      max-width: 980px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
-    .header-card {
-      background: var(--card);
+    /* HEADER */
+
+    .header {
+      background: #fff;
       border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 20px 18px 18px;
-      box-shadow: var(--shadow);
-      margin-bottom: 16px;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
     }
 
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 6px;
-    }
-
-    .brand-badge {
-      background: var(--navy);
-      color: var(--gold);
-      font-weight: 800;
-      font-size: 14px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      line-height: 1;
-    }
-
-    .title-wrap h1 {
+    h1 {
       margin: 0;
-      font-size: 18px;
-      line-height: 1.1;
+      font-size: 20px;
     }
 
-    .title-wrap p {
-      margin: 4px 0 0;
+    .sub {
+      font-size: 13px;
       color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* TOP SUMMARY */
+
+    .top-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .summary-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-main {
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .summary-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .kpi-inline {
+      display: flex;
+      gap: 10px;
       font-size: 13px;
     }
 
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 16px 0 14px;
-    }
-
-    .summary-box {
-      background: #f9fafb;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .summary-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 5px;
-      font-weight: 700;
-    }
-
-    .summary-value {
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .kpi-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 14px;
-      font-size: 14px;
-    }
-
-    .kpi-item {
+    .kpi-inline span {
       display: flex;
       align-items: center;
-      gap: 7px;
-      color: #374151;
+      gap: 4px;
     }
 
     .dot {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
     }
 
-    .dot.risk { background: var(--risk); }
-    .dot.watch { background: var(--watch); }
-    .dot.track { background: var(--track); }
-    .dot.blind { background: var(--blind); }
+    .risk { background: var(--risk); }
+    .watch { background: var(--watch); }
+    .track { background: var(--track); }
+    .blind { background: var(--blind); }
 
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
+    /* FILTERS */
 
     .filters {
       display: flex;
-      overflow-x: auto;
       gap: 8px;
-      padding-bottom: 2px;
+      margin-top: 12px;
+      overflow-x: auto;
     }
 
     .filter-btn {
-      border: 1px solid #d1d5db;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
       background: #f3f4f6;
-      color: #374151;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
     }
 
     .filter-btn.active {
-      background: #ffffff;
-      border-color: #cbd5e1;
-      box-shadow: inset 0 0 0 1px #e5e7eb;
+      background: #fff;
+      border-color: #bbb;
+    }
+
+    /* SEARCH */
+
+    .search-wrap {
+      position: relative;
+      margin-top: 10px;
     }
 
     .search {
       width: 100%;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .job-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .job-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-left-width: 4px;
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .job-card.risk { border-left-color: var(--risk); }
-    .job-card.watch { border-left-color: var(--watch); }
-    .job-card.track { border-left-color: var(--track); }
-    .job-card.blind { border-left-color: var(--blind); }
-
-    .job-top {
-      padding: 18px 18px 14px;
-      cursor: pointer;
-    }
-
-    .job-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .job-title-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .job-title {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.2;
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 6px 10px;
+      padding: 10px 36px 10px 12px;
       border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      border: 1px solid #ddd;
+      background: #f9fafb;
     }
 
-    .status-pill.risk {
-      background: var(--risk-bg);
-      color: #991b1b;
-    }
-
-    .status-pill.watch {
-      background: var(--watch-bg);
-      color: #92400e;
-    }
-
-    .status-pill.track {
-      background: var(--track-bg);
-      color: #166534;
-    }
-
-    .status-pill.blind {
-      background: var(--blind-bg);
-      color: #4b5563;
-    }
-
-    .chevron {
-      color: #9ca3af;
-      font-size: 12px;
-      padding-top: 6px;
-      flex-shrink: 0;
-    }
-
-    .job-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 14px;
-    }
-
-    .job-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 20px;
-    }
-
-    .field {
-      min-width: 0;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .label {
-      font-size: 11px;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .value {
-      font-size: 15px;
-      line-height: 1.45;
-      color: #374151;
-    }
-
-    .job-detail {
+    #clearSearch {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
       display: none;
-      border-top: 1px solid var(--line);
-      padding: 14px 18px 18px;
-      background: #fcfcfd;
+      color: #999;
     }
 
-    .job-card.open .job-detail {
-      display: block;
-    }
+    /* JOB CARDS */
 
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 20px;
-      margin-bottom: 14px;
-    }
-
-    .confidence-pill {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .activity-block {
-      border-top: 1px solid var(--line);
-      padding-top: 14px;
-    }
-
-    .activity-row {
-      padding: 10px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-
-    .activity-day {
-      font-size: 12px;
-      font-weight: 800;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 5px;
-    }
-
-    .empty {
-      background: #fff;
-      border: 1px dashed #d1d5db;
-      border-radius: 16px;
-      padding: 24px 18px;
-      text-align: center;
-      color: var(--muted);
-      box-shadow: var(--shadow);
-    }
-
-    @media (max-width: 720px) {
-      .summary-grid,
-      .job-grid,
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .job-title {
-        font-size: 16px;
-      }
-
-      .summary-value {
-        font-size: 17px;
-      }
-    }
-
-    @media (min-width: 721px) {
-      .controls {
-        grid-template-columns: 1fr 250px;
-        align-items: center;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <section class="header-card">
-      <div class="brand-row">
-        <div class="brand-badge">K&amp;K</div>
-        <div class="title-wrap">
-          <h1>Industries Hub</h1>
-          <p>Weekly site position across active jobs</p>
-        </div>
-      </div>
-
-      <div class="summary-grid">
-        <div class="summary-box">
-          <div class="summary-label">Total Jobs</div>
-          <div class="summary-value" id="totalJobs">0</div>
-        </div>
-        <div class="summary-box">
-          <div class="summary-label">Last Updated</div>
-          <div class="summary-value" id="lastUpdated">-</div>
-        </div>
-      </div>
-
-      <div class="kpi-row">
-        <div class="kpi-item"><span class="dot risk"></span><strong id="riskCount">0</strong> At Risk</div>
-        <div class="kpi-item"><span class="dot watch"></span><strong id="watchCount">0</strong> Watch</div>
-        <div class="kpi-item"><span class="dot track"></span><strong id="trackCount">0</strong> On Track</div>
-        <div class="kpi-item"><span class="dot blind"></span><strong id="blindCount">0</strong> Blind Spots</div>
-      </div>
-
-      <div class="controls">
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="risk">🔴 At Risk</button>
-          <button class="filter-btn" data-filter="watch">🟠 Watch</button>
-          <button class="filter-btn" data-filter="track">🟢 On Track</button>
-          <button class="filter-btn" data-filter="blind">⚪ Blind Spots</button>
-        </div>
-
-        <input
-          type="text"
-          id="searchInput"
-          class="search"
-          placeholder="Search jobs..."
-        />
-      </div>
-    </section>
-
-    <section id="jobList" class="job-list"></section>
-  </div>
-
-  <script src="data.js"></script>
-  <script>
-    const jobsData = Array.isArray(window.jobs) ? window.jobs : [];
-
-    const jobList = document.getElementById("jobList");
-    const searchInput = document.getElementById("searchInput");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-
-    let activeFilter = "all";
-    let searchTerm = "";
-
-    function safeText(value, fallback = "-") {
-      return value && String(value).trim() ? value : fallback;
-    }
-
-    function normaliseStatus(status) {
-      const s = (status || "").toLowerCase().trim();
-
-      if (s.includes("risk")) return "risk";
-      if (s.includes("watch")) return "watch";
-      if (s.includes("track")) return "track";
-      if (s.includes("blind")) return "blind";
-
-      return "blind";
-    }
-
-    function formatStatusLabel(statusKey) {
-      if (statusKey === "risk") return "At Risk";
-      if (statusKey === "watch") return "Watch";
-      if (statusKey === "track") return "On Track";
-      return "Blind Spot";
-    }
-
-    function parseDateValue(dateStr) {
-      if (!dateStr) return null;
-      const d = new Date(dateStr);
-      return isNaN(d.getTime()) ? null : d;
-    }
-
-    function getLatestDate(jobs) {
-      const validDates = jobs
-        .map(job => parseDateValue(job.updated || job.weekEnding))
-        .filter(Boolean)
-        .sort((a, b) => b - a);
-
-      if (!validDates.length) return "-";
-
-      return validDates[0].toLocaleDateString("en-AU", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      });
-    }
-
-    function updateSummary(jobs) {
-      const counts = {
-        risk: 0,
-        watch: 0,
-        track: 0,
-        blind: 0
-      };
-
-      jobsData.forEach(job => {
-        const key = normaliseStatus(job.status);
-        counts[key]++;
-      });
-
-      document.getElementById("totalJobs").textContent = jobsData.length;
-      document.getElementById("lastUpdated").textContent = getLatestDate(jobsData);
-
-      document.getElementById("riskCount").textContent = counts.risk;
-      document.getElementById("watchCount").textContent = counts.watch;
-      document.getElementById("trackCount").textContent = counts.track;
-      document.getElementById("blindCount").textContent = counts.blind;
-    }
-
-    function getFilteredJobs() {
-      return jobsData.filter(job => {
-        const statusKey = normaliseStatus(job.status);
-        const matchesFilter = activeFilter === "all" || statusKey === activeFilter;
-
-        const haystack = [
-          job.name,
-          job.status,
-          job.issue,
-          job.holdingUp,
-          job.next,
-          job.labour,
-          job.criticalPath,
-          job.reality,
-          job.updated,
-          job.weekEnding
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        const matchesSearch = haystack.includes(searchTerm.toLowerCase());
-
-        return matchesFilter && matchesSearch;
-      }).sort((a, b) => {
-        const order = { risk: 1, watch: 2, track: 3, blind: 4 };
-        return order[normaliseStatus(a.status)] - order[normaliseStatus(b.status)];
-      });
-    }
-
-    function buildActivity(activity) {
-      if (!activity || !activity.length) {
-        return `
-          <div class="activity-row">
-            <div class="value">No week activity loaded.</div>
-          </div>
-        `;
-      }
-
-      return activity.map(item => `
-        <div class="activity-row">
-          <div class="activity-day">${safeText(item.day)}</div>
-          <div class="value">${safeText(item.text)}</div>
-        </div>
-      `).join("");
-    }
-
-    function buildCard(job, index) {
-      const statusKey = normaliseStatus(job.status);
-      const statusLabel = formatStatusLabel(statusKey);
-      const updatedDate = safeText(job.updated || job.weekEnding);
-      const weekEnding = safeText(job.weekEnding);
-
-      return `
-        <article class="job-card ${statusKey}" data-index="${index}">
-          <div class="job-top">
-            <div class="job-head">
-              <div class="job-title-row">
-                <h2 class="job-title">${safeText(job.name)}</h2>
-                <span class="status-pill ${statusKey}">${statusLabel}</span>
-              </div>
-              <div class="chevron">▼</div>
-            </div>
-
-            <div class="job-meta">
-              <div>Week Ending ${weekEnding}</div>
-              <div>Updated ${updatedDate}</div>
-            </div>
-
-            <div class="job-grid">
-              <div class="field">
-                <div class="label">Issue</div>
-                <div class="value">${safeText(job.issue)}</div>
-              </div>
-
-              <div class="field">
-                <div class="label">Labour</div>
-                <div class="value">${safeText(job.labour)}</div>
-              </div>
-
-              <div class="field full">
-                <div class="label">Holding Up</div>
-                <div class="value">${safeText(job.holdingUp)}</div>
-              </div>
-
-              <div class="field full">
-                <div class="label">Action Required</div>
-                <div class="value">${safeText(job.next)}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="job-detail">
-            <div class="detail-grid">
-              <div class="field">
-                <div class="label">Critical Path</div>
-                <div class="value">${safeText(job.criticalPath)}</div>
-              </div>
-
-              <div class="field">
-                <div class="label">Report Confidence</div>
-                <div class="value">
-                  <span class="confidence-pill">${safeText(job.dataConfidence)}</span>
-                </div>
-              </div>
-
-              <div class="field full">
-                <div class="label">Reality</div>
-                <div class="value">${safeText(job.reality)}</div>
-              </div>
-            </div>
-
-            <div class="activity-block">
-              <div class="label">Week Activity</div>
-              ${buildActivity(job.weekActivity)}
-            </div>
-          </div>
-        </article>
-      `;
-    }
-
-    function renderJobs() {
-      const filteredJobs = getFilteredJobs();
-
-      if (!filteredJobs.length) {
-        jobList.innerHTML = `
-          <div class="empty">
-            No jobs match this filter or search.
-          </div>
-        `;
-        return;
-      }
-
-      jobList.innerHTML = filteredJobs.map((job, index) => buildCard(job, index)).join("");
-
-      document.querySelectorAll(".job-top").forEach(top => {
-        top.addEventListener("click", () => {
-          top.parentElement.classList.toggle("open");
-        });
-      });
-    }
-
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        filterButtons.forEach(btn => btn.classList.remove("active"));
-        button.classList.add("active");
-        activeFilter = button.dataset.filter;
-        renderJobs();
-      });
-    });
-
-    searchInput.addEventListener("input", (e) => {
-      searchTerm = e.target.value;
-      renderJobs();
-    });
-
-    updateSummary(jobsData);
-    renderJobs();
-  </script>
-</body>
-</html>
+    .
