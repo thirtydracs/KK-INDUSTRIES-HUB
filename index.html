@@ -151,4 +151,258 @@
 
     /* JOB CARDS */
 
-    .
+    .job-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .job {
+      background: #fff;
+      border-radius: 16px;
+      border-left: 4px solid #ccc;
+      border: 1px solid var(--line);
+      padding: 14px;
+      cursor: pointer;
+    }
+
+    .job.risk { border-left-color: var(--risk); }
+    .job.watch { border-left-color: var(--watch); }
+    .job.track { border-left-color: var(--track); }
+    .job.blind { border-left-color: var(--blind); }
+
+    .job-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .job-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .status {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .status.risk { background: #fee2e2; }
+    .status.watch { background: #ffedd5; }
+    .status.track { background: #dcfce7; }
+    .status.blind { background: #f3f4f6; }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .main {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .label {
+      font-size: 11px;
+      color: #999;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .detail {
+      display: none;
+      margin-top: 10px;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+
+    .job.open .detail {
+      display: block;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>K&K Industries</h1>
+    <div class="sub">Weekly site position across active jobs</div>
+
+    <div class="top-summary">
+      <div class="summary-left">
+        <div class="summary-main">
+          All Jobs <span id="totalJobs">0</span>
+        </div>
+        <div class="summary-sub">
+          Updated <span id="lastUpdated">-</span>
+        </div>
+      </div>
+
+      <div class="kpi-inline">
+        <span><div class="dot risk"></div><b id="riskCount">0</b></span>
+        <span><div class="dot watch"></div><b id="watchCount">0</b></span>
+        <span><div class="dot track"></div><b id="trackCount">0</b></span>
+        <span><div class="dot blind"></div><b id="blindCount">0</b></span>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data="all">All</button>
+      <button class="filter-btn" data="risk">At Risk</button>
+      <button class="filter-btn" data="watch">Watch</button>
+      <button class="filter-btn" data="track">On Track</button>
+      <button class="filter-btn" data="blind">Blind</button>
+    </div>
+
+    <div class="search-wrap">
+      <input id="searchInput" class="search" placeholder="Search jobs..." />
+      <span id="clearSearch">✕</span>
+    </div>
+  </div>
+
+  <div id="jobList" class="job-list"></div>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+const jobs = window.jobs || [];
+
+const jobList = document.getElementById("jobList");
+const searchInput = document.getElementById("searchInput");
+const clearBtn = document.getElementById("clearSearch");
+
+let filter = "all";
+let search = "";
+
+/* SUMMARY */
+
+function updateSummary() {
+  document.getElementById("totalJobs").innerText = jobs.length;
+
+  const latest = jobs
+    .map(j => new Date(j.updated))
+    .sort((a,b)=>b-a)[0];
+
+  document.getElementById("lastUpdated").innerText =
+    latest ? latest.toLocaleDateString("en-AU") : "-";
+
+  let counts = {risk:0,watch:0,track:0,blind:0};
+
+  jobs.forEach(j=>{
+    const s = j.status.toLowerCase();
+    if(s.includes("risk")) counts.risk++;
+    else if(s.includes("watch")) counts.watch++;
+    else if(s.includes("track")) counts.track++;
+    else counts.blind++;
+  });
+
+  document.getElementById("riskCount").innerText = counts.risk;
+  document.getElementById("watchCount").innerText = counts.watch;
+  document.getElementById("trackCount").innerText = counts.track;
+  document.getElementById("blindCount").innerText = counts.blind;
+}
+
+/* RENDER */
+
+function render() {
+  const filtered = jobs.filter(j => {
+    const s = j.status.toLowerCase();
+
+    const matchFilter = filter === "all" || s.includes(filter);
+
+    const matchSearch = (
+      j.name + j.issue + j.holdingUp
+    ).toLowerCase().includes(search.toLowerCase());
+
+    return matchFilter && matchSearch;
+  });
+
+  if(!filtered.length){
+    jobList.innerHTML = '<div class="empty">No jobs</div>';
+    return;
+  }
+
+  jobList.innerHTML = filtered.map((j,i)=>`
+    <div class="job ${j.status.toLowerCase().includes("risk")?"risk":
+                     j.status.toLowerCase().includes("watch")?"watch":
+                     j.status.toLowerCase().includes("track")?"track":"blind"}">
+
+      <div class="job-top">
+        <div class="job-title">${j.name}</div>
+        <div class="status">${j.status}</div>
+      </div>
+
+      <div class="meta">
+        Week Ending ${j.weekEnding} • Updated ${j.updated}
+      </div>
+
+      <div class="main">
+        <b>Holding Up:</b> ${j.holdingUp}
+      </div>
+
+      <div class="label">Action Required</div>
+      <div>${j.next}</div>
+
+      <div class="detail">
+        <div class="label">Reality</div>
+        <div>${j.reality}</div>
+      </div>
+
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".job").forEach(el=>{
+    el.onclick=()=>el.classList.toggle("open");
+  });
+}
+
+/* FILTER */
+
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    filter = btn.getAttribute("data");
+    render();
+  }
+});
+
+/* SEARCH */
+
+searchInput.oninput = (e)=>{
+  search = e.target.value;
+  clearBtn.style.display = search ? "block":"none";
+  render();
+};
+
+clearBtn.onclick = ()=>{
+  searchInput.value="";
+  search="";
+  filter="all";
+  clearBtn.style.display="none";
+
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelector('[data="all"]').classList.add("active");
+
+  render();
+};
+
+/* INIT */
+
+updateSummary();
+render();
+</script>
+</body>
+</html>
